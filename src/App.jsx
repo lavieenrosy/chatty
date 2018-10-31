@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
 
-
 const data = {
   currentUser: {name: "Bob"}, // optional. if currentUser is not defined, it means the user is Anonymous
   messages: [
@@ -21,19 +20,23 @@ const data = {
 
 class App extends Component {
 
+
+
   constructor(props) {
     super(props);
 
     this.state = { currentUser: data.currentUser, messages: data.messages };
     this.addMessage = this.addMessage.bind(this);
+    this.socket = new WebSocket("ws://localhost:3001");
   }
 
   addMessage(user, content) {
-    const newId = Math.floor((Math.random() * 100) + 4)
-    const newMessage = { id: newId, username: user, content: content }
-    const currentMessages = this.state.messages;
-    const newMessageArray = [...currentMessages, newMessage]
-    this.setState({ currentUser: user, messages: newMessageArray });
+    // const newMessage = { username: user, content: content }
+    // const currentMessages = this.state.messages;
+    // const newMessageArray = [...currentMessages, newMessage]
+    // this.setState({ currentUser: user, messages: newMessageArray });
+    // console.log(newMessage);
+    (this.socket).send(JSON.stringify(`username: ${user}, content: ${content}`));
   }
 
   componentDidMount() {
@@ -47,6 +50,14 @@ class App extends Component {
       // Calling setState will trigger a call to render() in App and all child components.
       this.setState({messages: messages})
     }, 3000);
+
+    // establish connection to WebSocket server
+    // const ws = new WebSocket("ws://localhost:3001");
+
+    (this.socket).onopen = function(event) {
+      console.log("Connected to server");
+    };
+
   }
 
   render() {
