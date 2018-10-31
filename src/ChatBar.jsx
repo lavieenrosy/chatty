@@ -36,7 +36,7 @@ class ChatBar extends Component {
   render() {
     return (
       <footer className="chatbar">
-        <input className="chatbar-username" placeholder={this.props.currentUser.name} onKeyUp={this.handleUserInput} />
+        <input className="chatbar-username" placeholder={this.props.currentUser} onKeyUp={this.handleUserInput} />
         <input className="chatbar-message" placeholder="Type a message and hit ENTER" onKeyUp={this.handleMessageInput} onKeyPress={this.onSubmit}/>
       </footer>
     );

@@ -28,35 +28,38 @@ class App extends Component {
     this.state = { currentUser: data.currentUser, messages: data.messages };
     this.addMessage = this.addMessage.bind(this);
     this.socket = new WebSocket("ws://localhost:3001");
+    this.handleMessage = this.handleMessage.bind(this);
   }
 
   addMessage(user, content) {
-    // const newMessage = { username: user, content: content }
+    const newMessage = { currentUser: user, messages: content }
     // const currentMessages = this.state.messages;
     // const newMessageArray = [...currentMessages, newMessage]
     // this.setState({ currentUser: user, messages: newMessageArray });
-    // console.log(newMessage);
-    (this.socket).send(JSON.stringify(`username: ${user}, content: ${content}`));
+    this.socket.send(JSON.stringify(newMessage));
+  }
+
+  handleMessage(message) {
+    const data = JSON.parse(message.data);
+    const {username, content, id} = data;
+    const newMessage = {id, username, content}
+
+    const currentMessages = this.state.messages;
+    const messages = [...currentMessages, newMessage];
+
+    this.setState({id, currentUser: username, messages});
   }
 
   componentDidMount() {
     console.log("componentDidMount <App />");
-    setTimeout(() => {
-      console.log("Simulating incoming message");
-      // Add a new message to the list of messages in the data store
-      const newMessage = {id: 3, username: "Michelle", content: "Hello there!"};
-      const messages = this.state.messages.concat(newMessage)
-      // Update the state of the app component.
-      // Calling setState will trigger a call to render() in App and all child components.
-      this.setState({messages: messages})
-    }, 3000);
 
     // establish connection to WebSocket server
-    // const ws = new WebSocket("ws://localhost:3001");
 
-    (this.socket).onopen = function(event) {
+    this.socket.onopen = function(event) {
       console.log("Connected to server");
     };
+
+    this.socket.onmessage = this.handleMessage;
 
   }
 
