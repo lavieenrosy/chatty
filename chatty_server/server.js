@@ -22,20 +22,42 @@ const clients = [];
 wss.on('connection', (ws) => {
   console.log('Client connected');
   clients.push(ws);
+  const numberUsers = clients.length;
+
+  // ws.on('open', function open() {
+    // console.log("#USERS1: ", numberUsers);
+    clients.forEach(client => {
+      if (client.readyState === WebSocket.OPEN) {
+        const message = {
+          type: "numUsers",
+          number: numberUsers
+        }
+        client.send(JSON.stringify(message));
+      }
+    });
+  // })
 
   ws.on('message', function incoming(data) {
     const incomingData = JSON.parse(data);
     const { type, currentUser, messages} = incomingData;
     const id = uuidv1();
-    let responseType = '';
+    let responseType;
 
-    if ( type === "postMessage") {
-      responseType = "incomingMessage";
-    } else if (type === "postNotification") {
-      responseType = "incomingNotification";
+    switch(type) {
+      case "postMessage":
+        responseType = "incomingMessage";
+        break;
+      case "postNotification":
+        responseType = "incomingNotification";
+        break;
     }
 
-    const message = { type: responseType, id, username: currentUser, content: messages }
+    const message = {
+      id: id,
+      type: responseType,
+      username: currentUser,
+      content: messages
+    }
 
     clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {

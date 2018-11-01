@@ -4,25 +4,27 @@ class Message extends Component {
 
   render() {
     const {type, username, content} = this.props;
-    console.log(type, username, content);
 
-    let messageDiv;
+    let message;
 
-    if (type === "incomingMessage") {
-      messageDiv = (
-        <div className="message">
-          <span className="message-username">{this.props.username}</span>
-          <span className="message-content">{this.props.content}</span>
-        </div>
-      );
-    } else if (type === "incomingNotification") {
-      messageDiv = (
-        <div className="message system">{this.props.content}
-        </div>
-      );
+    switch(type) {
+      case "incomingMessage":
+        message = (
+          <div className="message">
+            <span className="message-username">{this.props.username}</span>
+            <span className="message-content">{this.props.content}</span>
+          </div>
+        );
+        break;
+      case "incomingNotification":
+        message = (
+          <div className="message system">{this.props.content}
+          </div>
+        );
+        break;
     }
 
-    return (<div>{messageDiv}</div>)
+    return (<div>{ message }</div>);
   }
 }
 export default Message;

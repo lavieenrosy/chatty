@@ -7,7 +7,7 @@ class App extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { currentUser: "Anonymous", messages: [] };
+    this.state = { currentUser: 'Anonymous', messages: [], users: 0 };
     this.addMessage = this.addMessage.bind(this);
     this.socket = new WebSocket("ws://localhost:3001");
     this.handleMessage = this.handleMessage.bind(this);
@@ -26,11 +26,18 @@ class App extends Component {
 
   handleMessage(message) {
     const data = JSON.parse(message.data);
-    const {type, username, content, id} = data;
-    const newMessage = {id, type, username, content}
-    const currentMessages = this.state.messages;
-    const messages = [...currentMessages, newMessage];
-    this.setState({id, currentUser: username, messages});
+    const type = data.type;
+
+    if (type === "numUsers") {
+      const { number } = data;
+      this.setState({ users: number });
+    } else {
+      const {type, username, content, id} = data;
+      const newMessage = {id, type, username, content}
+      const currentMessages = this.state.messages;
+      const messages = [...currentMessages, newMessage];
+      this.setState({id, currentUser: username, messages});
+    }
   }
 
   componentDidMount() {
