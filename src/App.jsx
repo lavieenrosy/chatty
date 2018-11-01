@@ -7,7 +7,6 @@ class App extends Component {
 
   constructor(props) {
     super(props);
-
     this.state = { currentUser: 'Anonymous', messages: [], users: 0 };
     this.addMessage = this.addMessage.bind(this);
     this.socket = new WebSocket("ws://localhost:3001");
@@ -15,12 +14,10 @@ class App extends Component {
   }
 
   addMessage(user, content) {
-
     if (user !== this.state.currentUser) {
       const newMessage = { type: "postNotification", currentUser: user, messages: `${this.state.currentUser} has changed their name to ${user}` }
       this.socket.send(JSON.stringify(newMessage));
     }
-
     const newMessage = { type: "postMessage", currentUser: user, messages: content }
     this.socket.send(JSON.stringify(newMessage));
   }
@@ -33,8 +30,8 @@ class App extends Component {
       const { number } = data;
       this.setState({ users: number });
     } else {
-      const {type, username, content, id} = data;
-      const newMessage = {id, type, username, content}
+      const {id, type, username, content, colour} = data;
+      const newMessage = {id, type, username, content, colour}
       const currentMessages = this.state.messages;
       const messages = [...currentMessages, newMessage];
       this.setState({id, currentUser: username, messages});

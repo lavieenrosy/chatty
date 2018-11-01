@@ -3,29 +3,28 @@ const SocketServer = require('ws').Server;
 const uuidv1 = require('uuid/v1');
 const WebSocket = require('ws');
 
-// Set the port to 3001
-const PORT = 3001;
+// express setup
 
-// Create a new express server
+const PORT = 3001;
 const server = express()
-   // Make the express server serve static assets (html, javascript, css) from the /public folder
   .use(express.static('public'))
   .listen(PORT, '0.0.0.0', 'localhost', () => console.log(`Listening on ${ PORT }`));
 
-// Create the WebSockets server
 const wss = new SocketServer({ server });
 const clients = [];
 
 // Set up a callback that will run when a client connects to the server
 // When a client connects they are assigned a socket, represented by
 // the ws parameter in the callback.
+
 wss.on('connection', (ws) => {
   console.log('Client connected');
   clients.push(ws);
-  const numberUsers = clients.length;
 
-  // ws.on('open', function open() {
-    // console.log("#USERS1: ", numberUsers);
+  //get number of active users and send to all open connections
+
+  function sendActiveUsers() {
+    const numberUsers = wss.clients.size;
     clients.forEach(client => {
       if (client.readyState === WebSocket.OPEN) {
         const message = {
@@ -35,12 +34,32 @@ wss.on('connection', (ws) => {
         client.send(JSON.stringify(message));
       }
     });
-  // })
+  }
+  sendActiveUsers();
+
+  function getRandomColour() {
+    const letters = '0123456789ABCDEF';
+    let colour = '#';
+    for (let i = 0; i < 6; i++) {
+      colour += letters[Math.floor(Math.random() * 16)];
+    }
+    return colour;
+  }
+
+  // generate a random colour to assign to each specific connection:
+
+  const wsColour = getRandomColour();
 
   ws.on('message', function incoming(data) {
     const incomingData = JSON.parse(data);
     const { type, currentUser, messages} = incomingData;
     const id = uuidv1();
+
+    console.log(typeof message.content)
+
+    const extension = message.content.slice(-3);
+
+
     let responseType;
 
     switch(type) {
@@ -56,7 +75,8 @@ wss.on('connection', (ws) => {
       id: id,
       type: responseType,
       username: currentUser,
-      content: messages
+      content: messages,
+      colour: wsColour
     }
 
     clients.forEach(client => {
@@ -68,5 +88,8 @@ wss.on('connection', (ws) => {
   });
 
   // Set up a callback for when a client closes the socket. This usually means they closed their browser.
-  ws.on('close', () => console.log('Client disconnected'));
+  ws.on('close', () => {
+    sendActiveUsers();
+    console.log('Client disconnected');
+  });
 });
