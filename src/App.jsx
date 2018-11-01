@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import ChatBar from './ChatBar.jsx';
 import MessageList from './MessageList.jsx';
+import Nav from './Nav.jsx';
 
 class App extends Component {
 
@@ -54,7 +55,8 @@ class App extends Component {
   render() {
     return (
       <div>
-        <MessageList messages={this.state.messages}/>
+        <Nav users={this.state.users} />
+        <MessageList messages={this.state.messages} />
         <ChatBar currentUser={this.state.currentUser} addMessage={this.addMessage} />
 
       </div>
