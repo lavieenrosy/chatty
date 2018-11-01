@@ -14,14 +14,20 @@ class App extends Component {
   }
 
   addMessage(user, content) {
-    const newMessage = { currentUser: user, messages: content }
+
+    if (user !== this.state.currentUser) {
+      const newMessage = { type: "postNotification", currentUser: user, messages: `${this.state.currentUser} has changed their name to ${user}` }
+      this.socket.send(JSON.stringify(newMessage));
+    }
+
+    const newMessage = { type: "postMessage", currentUser: user, messages: content }
     this.socket.send(JSON.stringify(newMessage));
   }
 
   handleMessage(message) {
     const data = JSON.parse(message.data);
-    const {username, content, id} = data;
-    const newMessage = {id, username, content}
+    const {type, username, content, id} = data;
+    const newMessage = {id, type, username, content}
     const currentMessages = this.state.messages;
     const messages = [...currentMessages, newMessage];
     this.setState({id, currentUser: username, messages});
