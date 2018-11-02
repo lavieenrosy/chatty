@@ -28,7 +28,6 @@ class ChatBar extends Component {
       const content = this.state.content;
       const user = this.state.user;
       this.props.sendMessage(user, content);
-      event.target.value = '';
     }
     const userName = event.target.value;
     this.setState({ user: userName });

@@ -25,13 +25,16 @@ class App extends Component {
     const extension = content.slice(-3);
     if (extension === 'jpg' || extension === 'png' || extension === 'gif') {
       const newMessage = { type: 'image', currentUser: user, content: content }
+      this.setState({ currentUser: user })
       this.socket.send(JSON.stringify(newMessage));
+      return;
+    }
 
     // everything else is a standard message handled below
-    } else {
-      const newMessage = { type: 'postMessage', currentUser: user, content: content }
-      this.socket.send(JSON.stringify(newMessage));
-    }
+    const newMessage = { type: 'postMessage', currentUser: user, content: content }
+    this.setState({ currentUser: user })
+    this.socket.send(JSON.stringify(newMessage));
+
   }
 
   handleMessage(message) {
@@ -45,12 +48,11 @@ class App extends Component {
       const { id, username } = newMessage;
       const currentMessages = this.state.messages;
       const messages = [...currentMessages, newMessage];
-      this.setState({id, currentUser: username, messages});
+      this.setState({ messages });
     }
   }
 
   componentDidMount() {
-
     this.socket.onopen = function(event) {
       console.log('Connected to server');
     };
