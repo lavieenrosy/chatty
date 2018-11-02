@@ -1,12 +1,18 @@
 # Chatty
 
-Chatty is a single-page app built with ReactJS on the front end and a WebSocket server on the back end for multi-user real-time updates. 
+Chatty is a single-page app built with ReactJS on the front end, utilising a WebSocket server on the back end for multi-user real-time updates. 
 
 ## Screenshots
 
-New todos are entered it into the form and autocategorized:
+Users can change their name and post images. Each socket connection has its own unique display colour:
 
-![User count is dynamically updated]()
+![Change username and post image](https://github.com/lavieenrosy/chatty/blob/master/build/change-name-post-image.gif?raw=true)
+
+<br/>
+
+The user count changes when clients disconnect:
+
+![User count is dynamically updated](https://github.com/lavieenrosy/chatty/blob/master/build/user-count.gif?raw=true)
 
 <br/>
 
