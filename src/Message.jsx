@@ -3,31 +3,31 @@ import React, {Component} from 'react';
 class Message extends Component {
 
   render() {
-    const {type, username, content, colour} = this.props;
+    const { type, username, content, colour } = this.props;
 
     let message;
-    let userColour = {color: this.props.colour};
-    console.log(this.props);
+    let userColour = { color: colour };
+
     switch(type) {
-      case "incomingMessage":
+      case 'incomingMessage':
         message = (
           <div className="message">
-            <span className="message-username" style={userColour}>{this.props.username}</span>
-            <span className="message-content">{this.props.content}</span>
+            <span className="message-username" style={ userColour }>{ username }</span>
+            <span className="message-content">{ content }</span>
           </div>
         );
         break;
-      case "incomingNotification":
+      case 'incomingNotification':
         message = (
-          <div className="message system">{this.props.content}
+          <div className="message system">{ content }
           </div>
         );
         break;
-      case "incomingImage":
+      case 'incomingImage':
         message = (
           <div className="message">
-            <span className="message-username" style={userColour}>{this.props.username}</span>
-            <span className="message-content"><img className="image" src={this.props.content} /></span>
+            <span className="message-username" style={ userColour }>{ username }</span>
+            <span className="message-content"><img className="image" src={ content } /></span>
           </div>
         );
         break;

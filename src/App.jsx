@@ -8,37 +8,41 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = { currentUser: 'Anonymous', messages: [], users: 0 };
-    this.addMessage = this.addMessage.bind(this);
-    this.socket = new WebSocket("ws://localhost:3001");
+    this.sendMessage = this.sendMessage.bind(this);
+    this.socket = new WebSocket('ws://localhost:3001');
     this.handleMessage = this.handleMessage.bind(this);
   }
 
-  addMessage(user, content) {
+  sendMessage(user, content) {
+
+    // if the username has changed, set content to display notification
     if (user !== this.state.currentUser) {
-      const newMessage = { type: "postNotification", currentUser: user, content: `${this.state.currentUser} has changed their name to ${user}` }
+      const newMessage = { type: 'postNotification', currentUser: user, content: `${this.state.currentUser} has changed their name to ${user}` }
       this.socket.send(JSON.stringify(newMessage));
     }
 
+    // if the user's message ends with 'jpg', 'png', or 'gif', assign it an image type
     const extension = content.slice(-3);
     if (extension === 'jpg' || extension === 'png' || extension === 'gif') {
-      const newMessage = { type: "image", currentUser: user, content: content }
+      const newMessage = { type: 'image', currentUser: user, content: content }
       this.socket.send(JSON.stringify(newMessage));
+
+    // everything else is a standard message handled below
     } else {
-      const newMessage = { type: "postMessage", currentUser: user, content: content }
+      const newMessage = { type: 'postMessage', currentUser: user, content: content }
       this.socket.send(JSON.stringify(newMessage));
     }
   }
 
   handleMessage(message) {
-    const data = JSON.parse(message.data);
-    const type = data.type;
+    const newMessage = JSON.parse(message.data);
+    const type = newMessage.type;
 
-    if (type === "numUsers") {
-      const { number } = data;
+    if (type === 'numUsers') {
+      const { number } = newMessage;
       this.setState({ users: number });
     } else {
-      const {id, type, username, content, colour} = data;
-      const newMessage = {id, type, username, content, colour}
+      const { id, username } = newMessage;
       const currentMessages = this.state.messages;
       const messages = [...currentMessages, newMessage];
       this.setState({id, currentUser: username, messages});
@@ -46,14 +50,12 @@ class App extends Component {
   }
 
   componentDidMount() {
-    console.log("componentDidMount <App />");
 
     this.socket.onopen = function(event) {
-      console.log("Connected to server");
+      console.log('Connected to server');
     };
 
     this.socket.onmessage = this.handleMessage;
-
   }
 
   render() {
@@ -61,7 +63,7 @@ class App extends Component {
       <div>
         <Nav users={this.state.users} />
         <MessageList messages={this.state.messages} />
-        <ChatBar currentUser={this.state.currentUser} addMessage={this.addMessage} />
+        <ChatBar currentUser={this.state.currentUser} sendMessage={this.sendMessage} />
 
       </div>
     );

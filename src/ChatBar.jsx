@@ -12,11 +12,11 @@ class ChatBar extends Component {
 
   handleMessageInput(event) {
     const keyUp = event.key;
-    if (keyUp === "Enter") {
+    if (keyUp === 'Enter') {
       const content = this.state.content;
       const user = this.state.user;
-      this.props.addMessage(user, content);
-      event.target.value = "";
+      this.props.sendMessage(user, content);
+      event.target.value = '';
     }
     const newMessage = event.target.value;
     this.setState({ content: newMessage });
@@ -24,11 +24,11 @@ class ChatBar extends Component {
 
   handleUserInput(event) {
     const keyUp = event.key;
-    if (keyUp === "Enter") {
+    if (keyUp === 'Enter') {
       const content = this.state.content;
       const user = this.state.user;
-      this.props.addMessage(user, content);
-      event.target.value = "";
+      this.props.sendMessage(user, content);
+      event.target.value = '';
     }
     const userName = event.target.value;
     this.setState({ user: userName });
