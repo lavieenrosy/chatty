@@ -7,7 +7,7 @@ class Message extends Component {
 
     let message;
     let userColour = {color: this.props.colour};
-
+    console.log(this.props);
     switch(type) {
       case "incomingMessage":
         message = (
@@ -20,6 +20,14 @@ class Message extends Component {
       case "incomingNotification":
         message = (
           <div className="message system">{this.props.content}
+          </div>
+        );
+        break;
+      case "incomingImage":
+        message = (
+          <div className="message">
+            <span className="message-username" style={userColour}>{this.props.username}</span>
+            <span className="message-content"><img className="image" src={this.props.content} /></span>
           </div>
         );
         break;

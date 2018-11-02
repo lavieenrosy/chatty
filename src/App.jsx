@@ -15,11 +15,18 @@ class App extends Component {
 
   addMessage(user, content) {
     if (user !== this.state.currentUser) {
-      const newMessage = { type: "postNotification", currentUser: user, messages: `${this.state.currentUser} has changed their name to ${user}` }
+      const newMessage = { type: "postNotification", currentUser: user, content: `${this.state.currentUser} has changed their name to ${user}` }
       this.socket.send(JSON.stringify(newMessage));
     }
-    const newMessage = { type: "postMessage", currentUser: user, messages: content }
-    this.socket.send(JSON.stringify(newMessage));
+
+    const extension = content.slice(-3);
+    if (extension === 'jpg' || extension === 'png' || extension === 'gif') {
+      const newMessage = { type: "image", currentUser: user, content: content }
+      this.socket.send(JSON.stringify(newMessage));
+    } else {
+      const newMessage = { type: "postMessage", currentUser: user, content: content }
+      this.socket.send(JSON.stringify(newMessage));
+    }
   }
 
   handleMessage(message) {

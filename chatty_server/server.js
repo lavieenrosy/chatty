@@ -2,6 +2,7 @@ const express = require('express');
 const SocketServer = require('ws').Server;
 const uuidv1 = require('uuid/v1');
 const WebSocket = require('ws');
+const request = require('request');
 
 // express setup
 
@@ -21,7 +22,7 @@ wss.on('connection', (ws) => {
   console.log('Client connected');
   clients.push(ws);
 
-  //get number of active users and send to all open connections
+  //get number of active users and send to all open connections:
 
   function sendActiveUsers() {
     const numberUsers = wss.clients.size;
@@ -37,6 +38,8 @@ wss.on('connection', (ws) => {
   }
   sendActiveUsers();
 
+  // generate a random colour to assign to each specific connection:
+
   function getRandomColour() {
     const letters = '0123456789ABCDEF';
     let colour = '#';
@@ -46,19 +49,12 @@ wss.on('connection', (ws) => {
     return colour;
   }
 
-  // generate a random colour to assign to each specific connection:
-
   const wsColour = getRandomColour();
 
   ws.on('message', function incoming(data) {
     const incomingData = JSON.parse(data);
-    const { type, currentUser, messages} = incomingData;
+    const { type, currentUser, content} = incomingData;
     const id = uuidv1();
-
-    console.log(typeof message.content)
-
-    const extension = message.content.slice(-3);
-
 
     let responseType;
 
@@ -69,13 +65,16 @@ wss.on('connection', (ws) => {
       case "postNotification":
         responseType = "incomingNotification";
         break;
+      case "image":
+        responseType = "incomingImage";
+        break;
     }
 
     const message = {
       id: id,
       type: responseType,
       username: currentUser,
-      content: messages,
+      content: content,
       colour: wsColour
     }
 
